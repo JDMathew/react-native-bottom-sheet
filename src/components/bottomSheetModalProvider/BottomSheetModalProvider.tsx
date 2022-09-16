@@ -1,4 +1,4 @@
-import React, { useCallback, useMemo, useRef } from 'react';
+import React, { useCallback, useMemo, useRef, useState } from 'react';
 import { useSharedValue } from 'react-native-reanimated';
 import { PortalProvider } from '@gorhom/portal';
 import {
@@ -16,6 +16,12 @@ import type {
   BottomSheetModalProviderProps,
   BottomSheetModalRef,
 } from './types';
+import { ModalState } from 'src/contexts/modal/internal';
+
+const INITIAL_STATE: ModalState = {
+  mount: false,
+  data: undefined,
+};
 
 const BottomSheetModalProviderWrapper = ({
   children,
@@ -27,6 +33,7 @@ const BottomSheetModalProviderWrapper = ({
 
   //#region variables
   const sheetsQueueRef = useRef<BottomSheetModalRef[]>([]);
+  const [{ mount, data }, setModalState] = useState(INITIAL_STATE);
   //#endregion
 
   //#region private methods
@@ -157,8 +164,9 @@ const BottomSheetModalProviderWrapper = ({
     () => ({
       dismiss: handleDismiss,
       dismissAll: handleDismissAll,
+      data,
     }),
-    [handleDismiss, handleDismissAll]
+    [handleDismiss, handleDismissAll, data]
   );
   const internalContextVariables = useMemo(
     () => ({
@@ -167,6 +175,9 @@ const BottomSheetModalProviderWrapper = ({
       mountSheet: handleMountSheet,
       unmountSheet: handleUnmountSheet,
       willUnmountSheet: handleWillUnmountSheet,
+      mount,
+      resetModalState: () => setModalState(INITIAL_STATE),
+      setModalState,
     }),
     [
       animatedContainerHeight,
@@ -174,6 +185,7 @@ const BottomSheetModalProviderWrapper = ({
       handleMountSheet,
       handleUnmountSheet,
       handleWillUnmountSheet,
+      mount,
     ]
   );
   //#endregion

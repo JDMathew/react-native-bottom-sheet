@@ -79,7 +79,7 @@ export interface BottomSheetMethods {
 export interface BottomSheetModalMethods extends BottomSheetMethods {
   /**
    * Mount and present the bottom sheet modal to the initial snap point.
-   * @param data to be passed to the modal.
+   * @param data to be passed to the modal through render props and/or to the useBottomSheetModal hook.
    */
   present: (data?: any) => void;
   /**

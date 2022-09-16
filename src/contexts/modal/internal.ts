@@ -1,9 +1,13 @@
-import { createContext, Ref } from 'react';
+import { createContext, Ref, Dispatch, SetStateAction } from 'react';
 import type { Insets } from 'react-native';
 import type Animated from 'react-native-reanimated';
 import type BottomSheet from '../../components/bottomSheet';
 import type { BottomSheetModalStackBehavior } from '../../components/bottomSheetModal';
 
+export type ModalState = {
+  mount: boolean;
+  data: any;
+};
 export interface BottomSheetModalInternalContextType {
   containerHeight: Animated.SharedValue<number>;
   containerOffset: Animated.SharedValue<Required<Insets>>;
@@ -14,6 +18,9 @@ export interface BottomSheetModalInternalContextType {
   ) => void;
   unmountSheet: (key: string) => void;
   willUnmountSheet: (key: string) => void;
+  mount: boolean;
+  setModalState: Dispatch<SetStateAction<ModalState>>;
+  resetModalState: () => void;
 }
 
 export const BottomSheetModalInternalContext =

@@ -3,6 +3,7 @@ import { createContext } from 'react';
 export interface BottomSheetModalContextType {
   dismiss: (key?: string) => boolean;
   dismissAll: () => void;
+  data: any;
 }
 
 export const BottomSheetModalContext =

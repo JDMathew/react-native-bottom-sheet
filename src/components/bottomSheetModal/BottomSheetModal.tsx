@@ -5,11 +5,10 @@ import React, {
   useImperativeHandle,
   useMemo,
   useRef,
-  useState,
 } from 'react';
 import { Portal, usePortal } from '@gorhom/portal';
 import BottomSheet from '../bottomSheet';
-import { useBottomSheetModalInternal } from '../../hooks';
+import { useBottomSheetModal, useBottomSheetModalInternal } from '../../hooks';
 import { print } from '../../utilities';
 import {
   DEFAULT_STACK_BEHAVIOR,
@@ -20,14 +19,6 @@ import type { BottomSheetModalProps } from './types';
 import { id } from '../../utilities/id';
 
 type BottomSheetModal = BottomSheetModalMethods;
-
-const INITIAL_STATE: {
-  mount: boolean;
-  data: any;
-} = {
-  mount: false,
-  data: undefined,
-};
 
 const BottomSheetModalComponent = forwardRef<
   BottomSheetModal,
@@ -54,10 +45,6 @@ const BottomSheetModalComponent = forwardRef<
     ...bottomSheetProps
   } = props;
 
-  //#region state
-  const [{ mount, data }, setState] = useState(INITIAL_STATE);
-  //#endregion
-
   //#region hooks
   const {
     containerHeight,
@@ -65,7 +52,12 @@ const BottomSheetModalComponent = forwardRef<
     mountSheet,
     unmountSheet,
     willUnmountSheet,
+    mount,
+    setModalState,
+    resetModalState,
   } = useBottomSheetModalInternal();
+
+  const { data } = useBottomSheetModal();
   const { removePortal: unmountPortal } = usePortal();
   //#endregion
 
@@ -112,7 +104,7 @@ const BottomSheetModalComponent = forwardRef<
 
       // unmount the node, if sheet is still mounted
       if (_mounted) {
-        setState(INITIAL_STATE);
+        resetModalState();
       }
 
       // fire `onDismiss` callback
@@ -120,7 +112,14 @@ const BottomSheetModalComponent = forwardRef<
         _providedOnDismiss();
       }
     },
-    [key, resetVariables, unmountSheet, unmountPortal, _providedOnDismiss]
+    [
+      resetVariables,
+      unmountSheet,
+      key,
+      unmountPortal,
+      _providedOnDismiss,
+      resetModalState,
+    ]
   );
   //#endregion
 
@@ -172,7 +171,7 @@ const BottomSheetModalComponent = forwardRef<
   const handlePresent = useCallback(
     function handlePresent(_data?: any) {
       requestAnimationFrame(() => {
-        setState({
+        setModalState({
           mount: true,
           data: _data,
         });
